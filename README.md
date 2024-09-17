@@ -1,7 +1,13 @@
-# CRUD BIBLIOTECA PESSOAL
-Projeto criado visando o armazenamento e catalogação dos livros que possuo, visando um controle pessoal. O projeto coleta as informações do título do livro, autor, gênero e editora.
-Utilizado Java, MySQL e o framework Spring Boot.
-Projeto ainda em construção...
+# 📚 BookController - API para Gerenciamento de Livros
+Este repositório contém a implementação de um **Controller** que gerencia as operações de livros em uma API RESTful. O **BookController** é responsável por lidar com as requisições HTTP e mapear as operações CRUD (Create, Read, Update, Delete) para o gerenciamento de livros.
+
+# 🧪 Testando a API
+Você pode testar os endpoints utilizando ferramentas como o Postman, Insomnia ou através do cURL no terminal.
+
+# 🛠️ Tecnologias Utilizadas
+Java 11: Linguagem de programação utilizada.
+Spring Boot: Framework para desenvolvimento rápido de aplicações.
+UUID: Gerenciamento de identificadores únicos para cada livro.
 
 ```mermaid
 classDiagram
