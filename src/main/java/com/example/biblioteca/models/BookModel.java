@@ -22,11 +22,13 @@ public class BookModel implements Serializable {
     private String author;
     private String publisher;
 
+    public BookModel() {}
+
     public UUID getIdBook() {
         return idBook;
     }
 
-    public void setIdBook(UUID idBook) {
+    public void setId(UUID idBook) {
         this.idBook = idBook;
     }
 
