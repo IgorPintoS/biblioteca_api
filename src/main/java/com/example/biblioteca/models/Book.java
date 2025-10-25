@@ -10,26 +10,22 @@ import java.util.UUID;
 @Table(name = "LIVROS")
 
 //classe está habilitada para passar por serializações
-public class BookModel implements Serializable {
+public class Book implements Serializable {
     //numero de controle de versão de cada uma das classes que forem serializadas
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idBook;
+    private UUID id;
     private String name;
     private String genre;
     private String author;
     private String publisher;
 
-    public BookModel() {}
+    public Book() {}
 
-    public UUID getIdBook() {
-        return idBook;
-    }
-
-    public void setId(UUID idBook) {
-        this.idBook = idBook;
+    public UUID getId() {
+        return id;
     }
 
     public String getName() {

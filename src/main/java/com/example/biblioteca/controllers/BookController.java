@@ -1,15 +1,16 @@
 package com.example.biblioteca.controllers;
 
+import com.example.biblioteca.dtos.BookCreateDTO;
 import com.example.biblioteca.dtos.BookResponseDTO;
 import com.example.biblioteca.dtos.BookUpdateDTO;
-import com.example.biblioteca.models.BookModel;
+import com.example.biblioteca.models.Book;
 import com.example.biblioteca.repositories.BookRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,58 +18,112 @@ import java.util.UUID;
 @RestController
 public class BookController {
 
-
     private final BookRepository bookRepository; //ponto de injeção do repository
 
     public BookController(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    @PostMapping("/books") //inserindo livros
-    public ResponseEntity<BookModel> saveBook(@RequestBody @Valid BookUpdateDTO bookUpdateDTO) {
-        BookModel bookModel = new BookModel();
-        bookModel.setId(bookUpdateDTO.idBook());
-        bookModel.setAuthor(bookUpdateDTO.author());
-        bookModel.setGenre(bookUpdateDTO.genre());
-        bookModel.setName(bookUpdateDTO.name());
-        bookModel.setPublisher(bookModel.getPublisher());
+    @PostMapping("/books")
+    public ResponseEntity<BookResponseDTO> createBook(@RequestBody @Valid BookCreateDTO bookCreateDTO) {
+        Book book = new Book();
+        book.setAuthor(bookCreateDTO.author());
+        book.setGenre(bookCreateDTO.genre());
+        book.setName(bookCreateDTO.name());
+        book.setPublisher(bookCreateDTO.publisher());
 
-        BookModel newBook = bookRepository.save(bookModel);
+        Book newBook = bookRepository.save(book);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newBook);
+        BookResponseDTO bookResponseDTO = new BookResponseDTO(
+                newBook.getId(),
+                newBook.getAuthor(),
+                newBook.getGenre(),
+                newBook.getName(),
+                newBook.getPublisher());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookResponseDTO);
     }
-    
-    @GetMapping("/books") //buscando todos os livros
-    public ResponseEntity<List<BookModel>> getAllBooks(){ //busca a lista dos book model.
-        return ResponseEntity.status(HttpStatus.OK).body(bookRepository.findAll()); //retona somente com status ok e no corpo todos os books do repositorio
+
+    @GetMapping("/books")
+    public ResponseEntity<List<BookResponseDTO>> getAllBooks(){ //busca a lista dos book model.
+        List<Book> bookList = bookRepository.findAll();
+        List<BookResponseDTO> bookResponseDTOList = new ArrayList<>();
+
+        for(Book book : bookList) {
+            BookResponseDTO bookResponseDTO = new BookResponseDTO(
+                    book.getId(),
+                    book.getAuthor(),
+                    book.getGenre(),
+                    book.getName(),
+                    book.getPublisher()
+            );
+
+            bookResponseDTOList.add(bookResponseDTO);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTOList);
     }
+
     @GetMapping("/books/{id}") //buscando um unico livro
-    public ResponseEntity<Object> getOneBook(@PathVariable(value="id")UUID id){
-        Optional<BookModel> bookOne = bookRepository.findById(id);
+    public ResponseEntity<BookResponseDTO> getOneBook(@PathVariable UUID id){
+        Optional<Book> bookOne = bookRepository.findById(id);
+
         if(bookOne.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found.");
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(bookOne.get());
-    }
-    @PutMapping("/books/{id}") //editando um livro já criado
-    public ResponseEntity<Object> updateBook(@PathVariable(value="id") UUID id,
-                                             @RequestBody @Valid BookUpdateDTO bookUpdateDTO) {
-        Optional<BookModel> bookOne = bookRepository.findById(id);
-        if (bookOne.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found.");
-        }
-        var bookModel = bookOne.get();
-        BeanUtils.copyProperties(bookUpdateDTO, bookModel);
-        return ResponseEntity.status(HttpStatus.OK).body(bookRepository.save(bookModel));
-    }
-    @DeleteMapping("/books/{id}") //deletando um livro já criado
-    public ResponseEntity<Object> deleteBook(@PathVariable(value="id") UUID id){
-        Optional<BookModel> bookOne = bookRepository.findById(id);
-        if(bookOne.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found.");
-        }
-        bookRepository.delete(bookOne.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Book deleted successfully.");
+
+        Book book = bookOne.get();
+
+        BookResponseDTO bookResponseDTO = new BookResponseDTO(
+                book.getId(),
+                book.getName(),
+                book.getGenre(),
+                book.getAuthor(),
+                book.getPublisher()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTO);
     }
 
+    @PutMapping("/books/{id}") //editando um livro já criado
+    public ResponseEntity<BookResponseDTO> updateBook(@PathVariable UUID id,
+                                             @RequestBody @Valid BookUpdateDTO bookUpdateDTO) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+
+        if (bookOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Book book = bookOptional.get();
+
+        book.setAuthor(bookUpdateDTO.author());
+        book.setGenre(bookUpdateDTO.genre());
+        book.setName(bookUpdateDTO.name());
+        book.setPublisher(bookUpdateDTO.publisher());
+
+        bookRepository.save(book);
+
+        BookResponseDTO bookResponseDTO = new BookResponseDTO(
+                book.getId(),
+                book.getAuthor(),
+                book.getName(),
+                book.getGenre(),
+                book.getPublisher()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTO);
+    }
+
+    @DeleteMapping("/books/{id}") //deletando um livro já criado
+    public ResponseEntity<Void> deleteBook(@PathVariable UUID id){
+        Optional<Book> bookOne = bookRepository.findById(id);
+
+        if(bookOne.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        bookRepository.delete(bookOne.get());
+
+        return ResponseEntity.noContent().build();
+    }
 }
