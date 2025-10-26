@@ -1,18 +1,12 @@
 package com.example.biblioteca.models;
 
 import jakarta.persistence.*;
-
-import java.io.Serializable;
 import java.util.UUID;
 
 //entidade livros
 @Entity
 @Table(name = "LIVROS")
-
-//classe está habilitada para passar por serializações
-public class Book implements Serializable {
-    //numero de controle de versão de cada uma das classes que forem serializadas
-    private static final long serialVersionUID = 1L;
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
