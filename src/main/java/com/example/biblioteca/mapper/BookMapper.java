@@ -12,9 +12,9 @@ public class BookMapper {
     public BookResponseDTO toResponseDTO(Book book) {
         BookResponseDTO bookResponseDTO = new BookResponseDTO(
                 book.getId(),
-                book.getAuthor(),
                 book.getName(),
                 book.getGenre(),
+                book.getAuthor(),
                 book.getPublisher()
         );
 

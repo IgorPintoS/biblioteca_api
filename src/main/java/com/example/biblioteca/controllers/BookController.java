@@ -6,32 +6,31 @@ import com.example.biblioteca.dtos.BookUpdateDTO;
 import com.example.biblioteca.mapper.BookMapper;
 import com.example.biblioteca.models.Book;
 import com.example.biblioteca.repositories.BookRepository;
+import com.example.biblioteca.services.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class BookController {
 
-    private final BookRepository bookRepository;
+    private final BookService bookService;
     private final BookMapper bookMapper;
 
-    public BookController(BookRepository bookRepository, BookMapper bookMapper) { //injeção de dependências via construtor
-        this.bookRepository = bookRepository;
+    public BookController(BookService bookService, BookMapper bookMapper) { //injeção de dependências via construtor
+        this.bookService = bookService;
         this.bookMapper = bookMapper;
     }
 
     @PostMapping("/books")
     public ResponseEntity<BookResponseDTO> createBook(@RequestBody @Valid BookCreateDTO bookCreateDTO) {
-        Book book = bookMapper.createBookFromDTO(bookCreateDTO);
-        Book newBook = bookRepository.save(book);
-        BookResponseDTO bookResponseDTO = bookMapper.toResponseDTO(newBook);
+        BookResponseDTO bookResponseDTO = bookService.createBook(bookCreateDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(bookResponseDTO);
     }
@@ -39,12 +38,9 @@ public class BookController {
     @GetMapping("/books")
     public ResponseEntity<List<BookResponseDTO>> getAllBooks(){ //busca a lista dos book model.
         List<Book> bookList = bookRepository.findAll();
-        List<BookResponseDTO> bookResponseDTOList = new ArrayList<>();
 
-        for(Book book : bookList) { //alterar para um metodo funcional
-            BookResponseDTO bookResponseDTO = bookMapper.toResponseDTO(book);
-            bookResponseDTOList.add(bookResponseDTO);
-        }
+        List<BookResponseDTO> bookResponseDTOList = bookList.stream()
+                .map(bookMapper::toResponseDTO).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTOList);
     }

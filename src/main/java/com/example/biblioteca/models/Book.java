@@ -1,5 +1,6 @@
 package com.example.biblioteca.models;
 
+import com.example.biblioteca.enums.BookGenre;
 import jakarta.persistence.*;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
-    private String genre;
+    private BookGenre genre;
     private String author;
     private String publisher;
 
@@ -30,11 +31,11 @@ public class Book {
         this.name = name;
     }
 
-    public String getGenre() {
+    public BookGenre getGenre() {
         return genre;
     }
 
-    public void setGenre(String genre) {
+    public void setGenre(BookGenre genre) {
         this.genre = genre;
     }
 
