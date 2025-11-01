@@ -2,6 +2,11 @@ package com.example.biblioteca.models;
 
 import com.example.biblioteca.enums.BookGenre;
 import jakarta.persistence.*;
+import jdk.jfr.Timestamp;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcType;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 //entidade livros
@@ -13,9 +18,12 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
+    @Enumerated(EnumType.STRING)
     private BookGenre genre;
     private String author;
     private String publisher;
+    @CreationTimestamp
+    private LocalDateTime insertDate;
 
     public Book() {}
 

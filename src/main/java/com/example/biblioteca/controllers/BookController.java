@@ -30,30 +30,27 @@ public class BookController {
 
     @PostMapping("/books")
     public ResponseEntity<BookResponseDTO> createBook(@RequestBody @Valid BookCreateDTO bookCreateDTO) {
-        BookResponseDTO bookResponseDTO = bookService.createBook(bookCreateDTO);
+        Book book = bookMapper.toEntity(bookCreateDTO);
+        Book newBook = bookService.createBook(book);
+        BookResponseDTO bookResponseDTO = bookMapper.toResponseDTO(newBook); //tradução e save do novo book.
 
         return ResponseEntity.status(HttpStatus.CREATED).body(bookResponseDTO);
     }
 
     @GetMapping("/books")
     public ResponseEntity<List<BookResponseDTO>> getAllBooks(){ //busca a lista dos book model.
-        List<Book> bookList = bookRepository.findAll();
+        List<Book> bookList = bookService.getAllBooks();
 
         List<BookResponseDTO> bookResponseDTOList = bookList.stream()
-                .map(bookMapper::toResponseDTO).collect(Collectors.toList());
+                .map(book -> bookMapper.toResponseDTO(book))
+                .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTOList);
     }
 
     @GetMapping("/books/{id}")
     public ResponseEntity<BookResponseDTO> getOneBook(@PathVariable UUID id){
-        Optional<Book> bookOne = bookRepository.findById(id);
-
-        if(bookOne.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        Book book = bookOne.get();
+        Book book = bookService.getBook(id);
         BookResponseDTO bookResponseDTO = bookMapper.toResponseDTO(book);
 
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTO);
@@ -61,29 +58,16 @@ public class BookController {
 
     @PutMapping("/books/{id}")
     public ResponseEntity<BookResponseDTO> updateBook(@PathVariable UUID id, @RequestBody @Valid BookUpdateDTO bookUpdateDTO) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
-
-        if (bookOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Book book = bookMapper.updateBookFromDTO(bookOptional.get(), bookUpdateDTO);
-        bookRepository.save(book);
-
-        BookResponseDTO bookResponseDTO = bookMapper.toResponseDTO(book);
+        Book bookConverted = bookMapper.toEntity(bookUpdateDTO);
+        Book bookUpdated = bookService.updateBook(id, bookConverted);
+        BookResponseDTO bookResponseDTO = bookMapper.toResponseDTO(bookUpdated);
 
         return ResponseEntity.status(HttpStatus.OK).body(bookResponseDTO);
     }
 
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable UUID id){
-        Optional<Book> bookOne = bookRepository.findById(id);
-
-        if(bookOne.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        bookRepository.delete(bookOne.get());
+        bookService.deleteBook(id);
 
         return ResponseEntity.noContent().build();
     }

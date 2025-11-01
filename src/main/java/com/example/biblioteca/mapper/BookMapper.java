@@ -21,7 +21,8 @@ public class BookMapper {
         return bookResponseDTO;
     }
 
-    public Book updateBookFromDTO(Book book, BookUpdateDTO bookUpdateDTO) {
+    public Book toEntity(BookUpdateDTO bookUpdateDTO) {
+        Book book = new Book();
         book.setAuthor(bookUpdateDTO.author());
         book.setGenre(bookUpdateDTO.genre());
         book.setName(bookUpdateDTO.name());
@@ -30,7 +31,7 @@ public class BookMapper {
         return book;
     }
 
-    public Book createBookFromDTO(BookCreateDTO bookCreateDTO) {
+    public Book toEntity(BookCreateDTO bookCreateDTO) {
         Book book = new Book();
         book.setAuthor(bookCreateDTO.author());
         book.setGenre(bookCreateDTO.genre());
