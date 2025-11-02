@@ -2,9 +2,7 @@ package com.example.biblioteca.models;
 
 import com.example.biblioteca.enums.BookGenre;
 import jakarta.persistence.*;
-import jdk.jfr.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,7 +15,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private String name;
+    private String title;
     @Enumerated(EnumType.STRING)
     private BookGenre genre;
     private String author;
@@ -31,12 +29,12 @@ public class Book {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public BookGenre getGenre() {

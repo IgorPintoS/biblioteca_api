@@ -5,7 +5,6 @@ import com.example.biblioteca.dtos.BookResponseDTO;
 import com.example.biblioteca.dtos.BookUpdateDTO;
 import com.example.biblioteca.mapper.BookMapper;
 import com.example.biblioteca.models.Book;
-import com.example.biblioteca.repositories.BookRepository;
 import com.example.biblioteca.services.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,9 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+/*
+O controller apenas recebe a requisição e retorna o ResponseEntity, a tradução do DTO em objeto e vice-versa
+é feita pela classe mapper, as validações e contato com repository pela classe services.
+ */
 
 @RestController
 public class BookController {
@@ -38,7 +41,7 @@ public class BookController {
     }
 
     @GetMapping("/books")
-    public ResponseEntity<List<BookResponseDTO>> getAllBooks(){ //busca a lista dos book model.
+    public ResponseEntity<List<BookResponseDTO>> getAllBooks(){
         List<Book> bookList = bookService.getAllBooks();
 
         List<BookResponseDTO> bookResponseDTOList = bookList.stream()

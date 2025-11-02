@@ -6,5 +6,5 @@ import java.util.UUID;
 
 public interface BookRepository extends JpaRepository<Book, UUID> {
 
-    boolean findByNameAndPublisher(String name, String publisher);
+    boolean findByTitleAndPublisher(String title, String publisher);
 }

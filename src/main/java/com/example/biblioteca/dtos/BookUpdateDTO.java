@@ -7,8 +7,8 @@ import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 //DTO - transporte de dados entre componetes, agrupa um conjunto de atributos em uma classe simples.
-public record BookUpdateDTO(@NotBlank @Size(max = 60) String name,
+public record BookUpdateDTO(@NotBlank(message = "Book name cannot be empty.") @Size(max = 60) String title,
                             @NotBlank BookGenre genre,
-                            @NotBlank @Size(max = 60) String author,
+                            @NotBlank(message = "Author name cannot be empty.") @Size(max = 60) String author,
                             @Size(max = 60) String publisher) {
 }

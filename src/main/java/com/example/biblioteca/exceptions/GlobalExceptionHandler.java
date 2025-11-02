@@ -8,23 +8,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BookNameAndPublisherException.class)
-    public ResponseEntity<String> handleBookNameAndPublisherException(BookNameAndPublisherException e) {
+    @ExceptionHandler(BookTitleAndPublisherExistsException.class)
+    public ResponseEntity<String> handleBookNameAndPublisherException(BookTitleAndPublisherExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
-    @ExceptionHandler(BookListIsEmptyException.class)
-    public ResponseEntity<String> handleListIsEmptyException(BookListIsEmptyException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
-    @ExceptionHandler(BookNameOrAuthorIsEmptyException.class)
-    public ResponseEntity<String> handleBookNameOrAuthorIsEmptyException(BookNameOrAuthorIsEmptyException e) {
+    @ExceptionHandler(ListIsEmptyException.class)
+    public ResponseEntity<String> handleListIsEmptyException(ListIsEmptyException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<String> handleBookNotFoundException(BookNotFoundException e) {
+    public ResponseEntity<String> handleBookNotFoundExpetion(BookNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }
